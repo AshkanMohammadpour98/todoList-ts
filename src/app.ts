@@ -40,7 +40,21 @@ class Ui{
     }
 }
 
+class Store{
+    static addTodoLs(todo: TodoInterface){
+        let todos: TodoInterface[];
+        if(localStorage.getItem('todos')){
+            todos = JSON.parse(localStorage.getItem('todos')!)
+        }else{
+            todos = []
+        }
+        todos.push(todo);
+        localStorage.setItem('todos' , JSON.stringify(todos))
+    }
+}
+
 let ui = new Ui()
+
 
 formTodo!.addEventListener('submit' , (e: Event)=>{
     e.preventDefault()
@@ -59,12 +73,12 @@ formTodo!.addEventListener('submit' , (e: Event)=>{
         // console.log(value);
         const todoObj = new Todo(value)
         // console.log(todoObj);
-        const todo = ui.addTodoList(todoObj);
+        ui.addTodoList(todoObj);
+        //add todoObject in localstorage
+        Store.addTodoLs(todoObj)
+
         
-        
-       
-        
-        
+ 
         
         
     }

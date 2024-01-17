@@ -30,6 +30,19 @@ class Ui {
         (_b = (_a = elelment.parentElement) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.remove();
     }
 }
+class Store {
+    static addTodoLs(todo) {
+        let todos;
+        if (localStorage.getItem('todos')) {
+            todos = JSON.parse(localStorage.getItem('todos'));
+        }
+        else {
+            todos = [];
+        }
+        todos.push(todo);
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }
+}
 let ui = new Ui();
 formTodo.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -47,7 +60,9 @@ formTodo.addEventListener('submit', (e) => {
         // console.log(value);
         const todoObj = new Todo(value);
         // console.log(todoObj);
-        const todo = ui.addTodoList(todoObj);
+        ui.addTodoList(todoObj);
+        //add todoObject in localstorage
+        Store.addTodoLs(todoObj);
     }
     textTodo.value = '';
 });
