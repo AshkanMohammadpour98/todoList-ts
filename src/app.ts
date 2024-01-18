@@ -26,30 +26,68 @@ class Ui{
         <th scope="row">${todo.id}</th>
         <td>${todo.title}</td>
         <td>
-            <input class="form-check-input checkbox" type="checkbox" value="">
+            <input class="form-check-input checkbox" type="checkbox"${todo.status ? 'checked' : ''} onclick="Store.statusTodoLs(${todo.id})" value="">
         </td>
-        <td><button type="button" onclick=(ui.removeTodo(event)) class="btn btn-danger">Danger</button></td>
+        <td><button type="button" onclick="ui.removeTodo(event , ${todo.id})" class="btn btn-danger">Delet</button></td>
         `
         tbody.appendChild(tr)
     }
-    removeTodo(event: Event){
+    removeTodo(event : Event  , id: number){
         // console.log(event.target);
         const elelment = event.target as HTMLElement;
         elelment.parentElement?.parentElement?.remove();
+        Store.removeTodoLs(id)  
         
     }
 }
 
 class Store{
-    static addTodoLs(todo: TodoInterface){
+
+    static getTodo(){
         let todos: TodoInterface[];
         if(localStorage.getItem('todos')){
             todos = JSON.parse(localStorage.getItem('todos')!)
         }else{
             todos = []
         }
+        return todos;
+    }
+
+    static addTodoLs(todo: TodoInterface){
+        let todos = Store.getTodo()
         todos.push(todo);
         localStorage.setItem('todos' , JSON.stringify(todos))
+    }
+
+    static displayTodo(){
+        const todos = Store.getTodo()
+        const ui = new Ui();
+
+        todos.forEach((todo)=>{
+            ui.addTodoList(todo)
+        }) 
+        
+    }
+
+    static removeTodoLs(id: number){
+        const  todos = Store.getTodo();
+        // console.log(todos);
+        // console.log(id);
+        let newTodos = todos.filter(todo=> todo.id !== id);
+        // console.log(newTodos);
+        localStorage.setItem('todos' , JSON.stringify(newTodos))
+
+    }
+
+    static statusTodoLs( id: number){
+        let todos = JSON.parse(localStorage.getItem('todos')!)
+        // console.log(todos);
+        // console.log(status);
+        // console.log(id);
+       
+     const newTodos = todos.map((todo: TodoInterface) => todo.id === id ? {...todo , status : !todo.status} : todo)
+     localStorage.setItem('todos' , JSON.stringify(newTodos))
+        
     }
 }
 
@@ -76,13 +114,10 @@ formTodo!.addEventListener('submit' , (e: Event)=>{
         ui.addTodoList(todoObj);
         //add todoObject in localstorage
         Store.addTodoLs(todoObj)
-
-        
- 
-        
         
     }
     textTodo.value = ''
     
     
 }) 
+document.addEventListener('DOMContentLoaded' , ()=>{Store.displayTodo()})
